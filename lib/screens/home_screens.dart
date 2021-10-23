@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:animestewar/components/loader_component.dart';
 import 'package:animestewar/helpers/constants.dart';
 import 'package:animestewar/models/anime_model.dart';
+import 'package:animestewar/screens/detail_screen.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -62,12 +62,10 @@ class _HomeScreenState extends State<HomeScreen> {
         animes.add(Anime.fromJson(item));
       }
     }
-
-    print(animes.map((e) => e.animeName));
   }
 
   Widget _getContent() {
-    return animes.length <= 0 ? _noContent() : _getListViews();
+    return animes.isEmpty ? _noContent() : _getListViews();
   }
 
   Widget _noContent() {
@@ -84,9 +82,16 @@ class _HomeScreenState extends State<HomeScreen> {
       children: animes.map((e) {
         return Card(
           child: InkWell(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => DetailScreen(
+                            anime: e,
+                          )));
+            },
             child: Container(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               margin: const EdgeInsets.all(10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
