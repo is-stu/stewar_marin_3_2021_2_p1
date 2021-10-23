@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:animestewar/components/loader_component.dart';
 import 'package:animestewar/helpers/constants.dart';
 import 'package:animestewar/models/anime_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -34,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ? LoaderComponent(
               text: 'Espere por favor...',
             )
-          : Text('Hola perras'),
+          : _getContent(),
     );
   }
 
@@ -61,6 +62,22 @@ class _HomeScreenState extends State<HomeScreen> {
         animes.add(Anime.fromJson(item));
       }
     }
-    print(animes);
+
+    print(animes.map((e) => e.animeName));
   }
+
+  Widget _getContent() {
+    return animes.length <= 0 ? _noContent() : Text('hola');
+  }
+
+  Widget _noContent() {
+    return Center(
+      child: Container(
+          margin: const EdgeInsets.all(20),
+          child: const Text('No hay animes disponibles',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
+    );
+  }
+
+  void _getListViews() {}
 }
