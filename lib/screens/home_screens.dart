@@ -67,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _getContent() {
-    return animes.length <= 0 ? _noContent() : Text('hola');
+    return animes.length <= 0 ? _noContent() : _getListViews();
   }
 
   Widget _noContent() {
@@ -79,5 +79,36 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _getListViews() {}
+  Widget _getListViews() {
+    return ListView(
+      children: animes.map((e) {
+        return Card(
+          child: InkWell(
+            onTap: () {},
+            child: Container(
+              padding: EdgeInsets.all(10),
+              margin: const EdgeInsets.all(10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.network(
+                      e.animeImg,
+                      width: 50,
+                    ),
+                  ),
+                  Text(
+                    e.animeName,
+                    style: const TextStyle(fontSize: 15),
+                  ),
+                  const Icon(Icons.arrow_forward_ios),
+                ],
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
 }
