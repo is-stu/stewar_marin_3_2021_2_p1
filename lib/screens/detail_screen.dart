@@ -1,8 +1,11 @@
 import 'dart:convert';
 
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:animestewar/components/loader_component.dart';
 import 'package:animestewar/models/fact_model.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:animestewar/helpers/constants.dart';
@@ -56,6 +59,20 @@ class _DetailScreenState extends State<DetailScreen> {
     setState(() {
       showLoader = true;
     });
+    var connecResult = await Connectivity().checkConnectivity();
+    if (connecResult == ConnectivityResult.none) {
+      setState(() {
+        showLoader = false;
+      });
+      await showAlertDialog(
+          context: context,
+          title: 'ERROR!',
+          message: 'Verifica tu conexion a internet!',
+          actions: <AlertDialogAction>[
+            const AlertDialogAction(key: null, label: 'Aceptar')
+          ]);
+      return;
+    }
     var url = Uri.parse(Constants.apiURL + '/' + widget.anime.animeName);
     var response = await http.get(
       url,
@@ -94,7 +111,7 @@ class _DetailScreenState extends State<DetailScreen> {
     return Container(
       margin: const EdgeInsets.all(5),
       child: Text('Numero de Facts: $totalFacts',
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          style: GoogleFonts.acme(fontSize: 20)),
     );
   }
 
@@ -102,7 +119,7 @@ class _DetailScreenState extends State<DetailScreen> {
     return Container(
       margin: const EdgeInsets.all(10),
       child: Text('Titulo: ${widget.anime.animeName}',
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          style: GoogleFonts.acme(fontSize: 20)),
     );
   }
 
@@ -119,7 +136,8 @@ class _DetailScreenState extends State<DetailScreen> {
               padding: const EdgeInsets.all(5),
               child: Text(
                 '${e.factId} ${e.fact} ',
-                style: const TextStyle(color: Colors.black),
+                style:
+                    GoogleFonts.acme(color: Colors.black, letterSpacing: 0.3),
               ),
             ),
           );

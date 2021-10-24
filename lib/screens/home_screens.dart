@@ -1,11 +1,14 @@
 import 'dart:convert';
 
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:animestewar/components/loader_component.dart';
 import 'package:animestewar/helpers/constants.dart';
 import 'package:animestewar/models/anime_model.dart';
 import 'package:animestewar/screens/detail_screen.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
@@ -28,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('The Best Animes'),
+        title: Text('The Best Animes', style: GoogleFonts.acme()),
         backgroundColor: const Color(0xFFFF8000),
       ),
       body: showLoader
@@ -43,6 +46,20 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       showLoader = true;
     });
+    var connecResult = await Connectivity().checkConnectivity();
+    if (connecResult == ConnectivityResult.none) {
+      setState(() {
+        showLoader = false;
+      });
+      await showAlertDialog(
+          context: context,
+          title: 'ERROR!',
+          message: 'Verifica tu conexion a internet!',
+          actions: <AlertDialogAction>[
+            const AlertDialogAction(key: null, label: 'Aceptar')
+          ]);
+      return;
+    }
     var url = Uri.parse(Constants.apiURL);
     var response = await http.get(
       url,
@@ -72,13 +89,15 @@ class _HomeScreenState extends State<HomeScreen> {
     return Center(
       child: Container(
           margin: const EdgeInsets.all(20),
-          child: const Text('No hay animes disponibles',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
+          child: Text('No hay animes disponibles',
+              style: GoogleFonts.acme(fontSize: 20))),
     );
   }
 
   Widget _getListViews() {
     return ListView(
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
       children: animes.map((e) {
         return Card(
           child: InkWell(
@@ -105,9 +124,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Text(
                     e.animeName,
-                    style: const TextStyle(fontSize: 15),
+                    style: GoogleFonts.acme(fontSize: 25),
                   ),
-                  const Icon(Icons.arrow_forward_ios),
+                  const Icon(
+                    Icons.arrow_forward_ios,
+                    color: Color(0xFFFF8000),
+                  ),
                 ],
               ),
             ),
