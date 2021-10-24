@@ -101,7 +101,7 @@ class _DetailScreenState extends State<DetailScreen> {
         borderRadius: BorderRadius.circular(15),
         child: Image.network(
           widget.anime.animeImg,
-          width: 250,
+          width: 200,
         ),
       ),
     );

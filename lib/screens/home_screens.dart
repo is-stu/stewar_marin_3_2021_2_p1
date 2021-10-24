@@ -21,6 +21,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool showLoader = false;
   List<Anime> animes = [];
+  List<Anime> filterAnime = [];
+  bool isSearching = false;
   @override
   void initState() {
     super.initState();
@@ -31,7 +33,41 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('The Best Animes', style: GoogleFonts.acme()),
+        title: !isSearching
+            ? Text('Animes', style: GoogleFonts.acme(fontSize: 23))
+            : TextField(
+                onChanged: (value) {
+                  filterName(value);
+                },
+                style: GoogleFonts.acme(),
+                decoration: const InputDecoration(
+                    icon: Icon(
+                      Icons.search,
+                      color: Colors.white,
+                    ),
+                    hintText: "Encuentra tu anime",
+                    hintStyle: TextStyle(color: Colors.white)),
+              ),
+        actions: [
+          isSearching
+              ? IconButton(
+                  icon: const Icon(Icons.cancel),
+                  onPressed: () {
+                    setState(() {
+                      isSearching = false;
+                      filterAnime = animes;
+                    });
+                  },
+                )
+              : IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () {
+                    setState(() {
+                      isSearching = true;
+                    });
+                  },
+                )
+        ],
         backgroundColor: const Color(0xFFFF8000),
       ),
       body: showLoader
@@ -78,6 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
       for (var item in decodedJson['data']) {
         animes.add(Anime.fromJson(item));
       }
+      filterAnime = animes;
     }
   }
 
@@ -98,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return ListView(
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
-      children: animes.map((e) {
+      children: filterAnime.map((e) {
         return Card(
           child: InkWell(
             onTap: () {
@@ -137,5 +174,15 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }).toList(),
     );
+  }
+
+  void filterName(value) {
+    setState(() {
+      filterAnime = animes
+          .where((element) => element.animeName
+              .toLowerCase()
+              .contains(value.toString().toLowerCase()))
+          .toList();
+    });
   }
 }
